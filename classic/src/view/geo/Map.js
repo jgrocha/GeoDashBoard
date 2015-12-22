@@ -16,9 +16,11 @@ Ext.define("Admin.view.geo.Map", {
 
     items: [{
         xtype: 'geo-mapcanvas',
-        responsiveCls: 'big-100'
+        responsiveCls: 'big-100',
+        height: 400 // good to know
     }, {
         xtype: 'geo-mapgrid',
+        reference: 'geo-mapgrid',
         responsiveCls: 'big-100'
     }]
 });
