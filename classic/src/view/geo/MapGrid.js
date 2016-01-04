@@ -8,8 +8,12 @@ Ext.define("Admin.view.geo.MapGrid",{
         type: "geo-mapgrid"
     },
 
+    cls: 'shadow-panel',
+
     // The store will be set later
     // store: '{featureStore}',
+
+    title: 'Population',
 
     columns: [
         {xtype: 'gx_symbolizercolumn', width: 40},
@@ -22,6 +26,10 @@ Ext.define("Admin.view.geo.MapGrid",{
             flex: 1
         }
     ],
+
+    selModel: {
+        allowDeselect: true
+    },
 
     listeners: {
         'selectionchange': 'featureGridSelectionChanged'

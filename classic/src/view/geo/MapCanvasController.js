@@ -3,11 +3,15 @@ Ext.define('Admin.view.geo.MapCanvasController', {
     alias: 'controller.geo-mapcanvas',
 
     beforeMapCanvasRender: function (view) {
+        //<debug>
         console.log('beforeMapCanvasRender');
+        //</debug>
     },
 
     afterMapCanvasRender: function (view) {
+        //<debug>
         console.log('afterMapCanvasRender');
+        //</debug>
         var me = this;
         var vm = view.up('geo-map').getViewModel();
         var olMap = view.map;
@@ -19,15 +23,23 @@ Ext.define('Admin.view.geo.MapCanvasController', {
                     featureProjection: 'EPSG:3857'
                 })
             }),
+            name: 'Population',
+            legendUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Edit_pie_chart.jpg',
             style: vm.data.redStyle
         });
         olMap.addLayer(vectorLayer);
+
+        var treeStore = Ext.create('GeoExt.data.store.LayersTree', {
+            layerGroup: olMap.getLayerGroup()
+        });
+        vm.setStores({'treeStore': treeStore});
+        var tree = view.up('geo-map').down('geo-tree');
+        tree.setStore(treeStore);
 
         var featureStore = Ext.create('GeoExt.data.store.Features', {
             layer: vectorLayer,
             map: olMap
         });
-
         vm.setStores({'featureStore': featureStore});
 
         var grid = view.up('geo-map').down('geo-mapgrid');
@@ -40,26 +52,22 @@ Ext.define('Admin.view.geo.MapCanvasController', {
         olMap.addInteraction(selectSingleClick);
         vm.data.select = selectSingleClick;
 
-        selectSingleClick.on('select', function(e) {
-            console.log('# of selected features: ' + e.selected.length);
-            console.log('# of unselected features: ' + e.deselected.length);
-            console.log('features: ');
+        selectSingleClick.on('select', function (e) {
             var features = e.target.getFeatures();
-            //console.log(features);
+            var geomapv = view.up('geo-map');
+            var grid = geomapv.lookupReference('geo-mapgrid');
 
-            features.forEach(function(feature, idx, a) {
-                console.log(feature);
+            e.selected.forEach(function (feature, idx, a) {
                 var store = vm.getStore('featureStore');
                 var record = store.getByFeature(feature);
-                console.log(record);
-                var geomapv = this.up('geo-map');
-                var grid = geomapv.lookupReference('geo-mapgrid');
-                console.log(grid);
-                grid.getSelectionModel().select(record);
-
+                grid.getSelectionModel().select(record, true); // keepExisting = true
             }, view);
 
-
+            e.deselected.forEach(function (feature, idx, a) {
+                var store = vm.getStore('featureStore');
+                var record = store.getByFeature(feature);
+                grid.getSelectionModel().deselect(record);
+            }, view);
 
         });
     }

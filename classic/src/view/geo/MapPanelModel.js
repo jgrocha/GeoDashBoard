@@ -1,6 +1,16 @@
-Ext.define('Admin.view.geo.MapModel', {
+Ext.define('Admin.view.geo.MapPanelModel', {
     extend: 'Ext.app.ViewModel',
     alias: 'viewmodel.geo-map',
+    /*
+     The store 'featureStore' will be added added to this viewModel
+     The store 'treeStore' will be added added to this viewModel
+     */
+    /*
+     stores: {
+     featureStore: {}
+     treeStore: {}
+     }
+     */
     data: {
         blueStyle: new ol.style.Style({
             image: new ol.style.Circle({
@@ -44,78 +54,61 @@ Ext.define('Admin.view.geo.MapModel', {
                 {
                     "type": "Feature",
                     "properties": {
-                        "city": "Dortmund"
+                        "city": "Hamburg",
+                        "pop": 1700000
                     },
                     "geometry": {
                         "type": "Point",
                         "coordinates": [
-                            7.481689453125,
-                            51.49506473014368
+                            10.107421874999998,
+                            53.527247970102465
                         ]
                     }
                 },
                 {
                     "type": "Feature",
                     "properties": {
-                        "city": "Köln"
+                        "city": "Frankfurt / Main",
+                        "pop": 700000
                     },
                     "geometry": {
                         "type": "Point",
                         "coordinates": [
-                            6.976318359375,
-                            50.93073802371819
+                            8.76708984375,
+                            50.064191736659104
                         ]
                     }
                 },
                 {
                     "type": "Feature",
                     "properties": {
-                        "city": "Kaiserslautern"
+                        "city": "Berlin",
+                        "pop": 3500000
                     },
                     "geometry": {
                         "type": "Point",
                         "coordinates": [
-                            7.7838134765625,
-                            49.44670029695474
+                            13.447265624999998,
+                            52.53627304145948
                         ]
                     }
                 },
                 {
                     "type": "Feature",
                     "properties": {
-                        "city": "Bonn"
+                        "city": "München",
+                        "pop": 1400000
                     },
                     "geometry": {
                         "type": "Point",
                         "coordinates": [
-                            7.102661132812499,
-                            50.74688365485319
-                        ]
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "city": "Stuttgart"
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            9.1461181640625,
-                            48.77429274267509
+                            11.6455078125,
+                            48.1367666796927
                         ]
                     }
                 }
             ]
         }
     }
-
-    /*
-    The store 'featureStore' will be added added to this viewModel
-
-    stores: {
-        featureStore: {}
-    }
-    */
 
 });

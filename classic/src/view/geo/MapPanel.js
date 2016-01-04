@@ -1,10 +1,10 @@
-Ext.define("Admin.view.geo.Map", {
+Ext.define("Admin.view.geo.MapPanel", {
     extend: "Ext.panel.Panel",
     alias: 'widget.geo-map',
 
     requires: [
-        "Admin.view.geo.MapController",
-        "Admin.view.geo.MapModel"
+        "Admin.view.geo.MapPanelController",
+        "Admin.view.geo.MapPanelModel"
     ],
 
     layout: 'responsivecolumn',
@@ -21,6 +21,10 @@ Ext.define("Admin.view.geo.Map", {
     }, {
         xtype: 'geo-mapgrid',
         reference: 'geo-mapgrid',
-        responsiveCls: 'big-100'
+        responsiveCls: 'big-60'
+    }, {
+        xtype: 'geo-tree',
+        //html: 'Legend',
+        responsiveCls: 'big-40'
     }]
 });

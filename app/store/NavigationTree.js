@@ -28,8 +28,8 @@ Ext.define('Admin.store.NavigationTree', {
                 routeId:'profile'
             },
             {
-                text:   'OpenLayers 3 map',
-                view:   'geo.Map',
+                text:   'GeoExt 3',
+                view:   'geo.MapPanel',
                 leaf:   true,
                 iconCls: 'x-fa fa-globe',
                 routeId:'map'
