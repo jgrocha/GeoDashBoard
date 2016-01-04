@@ -1,5 +1,5 @@
 $app-name:  dynamic( 'Admin' );
-$image-search-path: '/home/jgr/WebstormProjects/GeoDashBoard/ext/build/examples/admin-dashboard/classic/resources';
+$image-search-path: '/home/jgr/WebstormProjects/GeoDashBoard/build/production/Admin/classic/resources';
 $theme-name:  dynamic( 'theme-triton' );
 $include-admin-application: dynamic(true);;
 $include-admin-data-pie: dynamic(true);;
