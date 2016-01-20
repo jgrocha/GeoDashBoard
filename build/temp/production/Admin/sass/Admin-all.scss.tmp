@@ -110,6 +110,7 @@ $include-admin-view-geo-mappanelmodel: dynamic(true);;
 $include-admin-view-geo-maptree: dynamic(true);;
 $include-admin-view-geo-maptreecontroller: dynamic(true);;
 $include-admin-view-geo-maptreemodel: dynamic(true);;
+$include-admin-view-geo-popupwindow: dynamic(true);;
 $include-admin-view-main-list: dynamic(true);;
 $include-admin-view-main-main: dynamic(true);;
 $include-admin-view-main-maincontainerwrap: dynamic(true);;

@@ -70,6 +70,18 @@ Ext.define('Admin.view.geo.MapCanvasController', {
             }, view);
 
         });
+
+        var popupWindow = Ext.create('Admin.view.geo.PopupWindow');
+
+        olMap.getViewport().addEventListener("dblclick", function(e) {
+            var position = olMap.getEventPixel(e);
+            var coordinate = olMap.getEventCoordinate(e);
+            var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
+            popupWindow.setPosition(position[0] + me.getView().getX(), position[1] + me.getView().getY(), {});
+            popupWindow.setTitle(hdms);
+            popupWindow.show();
+        });
+
     }
 
 });
