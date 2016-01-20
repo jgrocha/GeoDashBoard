@@ -38,7 +38,8 @@ Ext.define("Admin.view.geo.MapCanvas",{
         view: new ol.View({
             center: ol.proj.fromLonLat( [ 7, 51 ] ),
             zoom: 5
-        })
+        }),
+        interactions : ol.interaction.defaults({doubleClickZoom :false})
     })
 
 });
