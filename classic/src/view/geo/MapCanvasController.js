@@ -32,7 +32,7 @@ Ext.define('Admin.view.geo.MapCanvasController', {
         var treeStore = Ext.create('GeoExt.data.store.LayersTree', {
             layerGroup: olMap.getLayerGroup()
         });
-        vm.setStores({'treeStore': treeStore});
+        vm.setStores(Ext.apply(vm.getStores(), {'treeStore': treeStore}));
         var tree = view.up('geo-map').down('geo-tree');
         tree.setStore(treeStore);
 
@@ -40,8 +40,7 @@ Ext.define('Admin.view.geo.MapCanvasController', {
             layer: vectorLayer,
             map: olMap
         });
-        vm.setStores({'featureStore': featureStore});
-
+        vm.setStores(Ext.apply(vm.getStores(), {'featureStore': featureStore}));
         var grid = view.up('geo-map').down('geo-mapgrid');
         grid.setStore(featureStore);
 

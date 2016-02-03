@@ -109,6 +109,10 @@ Ext.define('Admin.view.geo.MapPanelModel', {
                 }
             ]
         }
+    },
+
+    getStores: function () {
+        return this.storeInfo || {};
     }
 
 });
