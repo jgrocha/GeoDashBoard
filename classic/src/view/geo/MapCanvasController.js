@@ -60,81 +60,49 @@ Ext.define('Admin.view.geo.MapCanvasController', {
             e.selected.forEach(function (feature, idx, a) {
                 var store = vm.getStore('featureStore');
                 var record = store.getByFeature(feature);
-                grid.getSelectionModel().select(record, true); // keepExisting = true
+                grid.getSelectionModel().select(record, true, true); // keepExisting = true, suppressEvent = true
             }, view);
 
             e.deselected.forEach(function (feature, idx, a) {
                 var store = vm.getStore('featureStore');
                 var record = store.getByFeature(feature);
-                grid.getSelectionModel().deselect(record);
+                grid.getSelectionModel().deselect(record, true); // suppressEvent = true
             }, view);
 
         });
 
-        var popupWindow = Ext.create('Admin.view.geo.PopupWindow');
+        me.popupwindow = null;
 
         olMap.getViewport().addEventListener("dblclick", function (e) {
+            var windows = Ext.ComponentQuery.query('popup-window');
+            if (windows.length > 0) {
+                me.popupwindow = windows[0];
+            } else {
+                me.popupWindow = Ext.create('Admin.view.geo.PopupWindow');
+            }
             var position = olMap.getEventPixel(e);
             var coordinate = olMap.getEventCoordinate(e);
             var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
-            popupWindow.setPosition(position[0] + me.getView().getX(), position[1] + me.getView().getY(), {});
+            me.popupWindow.setPosition(position[0] + me.getView().getX(), position[1] + me.getView().getY(), {});
             //console.log(me.getView().getConstrainRegion());
             //console.log(view.getConstrainRegion());
-            popupWindow.setTitle(hdms);
-            popupWindow.show();
-            popupWindow.doConstrain(me.getView().getConstrainRegion());
-            popupWindow.constrain = true;
+            me.popupWindow.setTitle(hdms);
+            me.popupWindow.show();
+            me.popupWindow.doConstrain(me.getView().getConstrainRegion());
+            me.popupWindow.constrain = true;
         });
 
         olMap.on('pointerdrag', function () {
-            if (popupWindow) {
-                popupWindow.hide();
+            if (me.popupWindow) {
+                me.popupWindow.hide();
             }
         });
 
         olMap.on('moveend', function () {
-            if (popupWindow) {
-                popupWindow.hide();
+            if (me.popupWindow) {
+                me.popupWindow.hide();
             }
         });
-
-        /*
-         * forcing pan
-         *
-         *
-         var showPopup = false;
-         
-         olMap.getViewport().addEventListener("dblclick", function (e) {
-         var position = olMap.getEventPixel(e);
-         var coordinate = olMap.getEventCoordinate(e);
-         showPopup = true;
-         var pan = ol.animation.pan({
-         duration: 1000,
-         source: (olMap.getView().getCenter())
-         });
-         olMap.beforeRender(pan);
-         olMap.getView().setCenter(coordinate);
-         });
-
-         olMap.on('moveend', function () {
-         //if (popupWindow) {
-         //    popupWindow.hide();
-         //}
-         var coordinate = olMap.getView().getCenter();
-         var position = olMap.getPixelFromCoordinate(coordinate);
-
-         var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
-         popupWindow.setPosition(position[0] + me.getView().getX(), position[1] + me.getView().getY(), {});
-         //console.log(me.getView().getConstrainRegion());
-         //console.log(view.getConstrainRegion());
-         popupWindow.setTitle(hdms);
-         if (showPopup) {
-         popupWindow.show();
-         popupWindow.doConstrain(me.getView().getConstrainRegion());
-         popupWindow.constrain = true;
-         }
-         });
-         */
 
     }
 

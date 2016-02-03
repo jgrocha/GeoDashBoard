@@ -190,6 +190,9 @@
      *
      */
     "js": [{
+        "path": "http://openlayers.org/en/master/build/ol.js",
+        "remote": true
+    }, {
         "path": "app.js",
         "bundle": true
     }],
@@ -245,6 +248,9 @@
         "path": "${build.out.css.path}",
         "bundle": true,
         "exclude": ["fashion"]
+    }, {
+        "path": "http://openlayers.org/en/master/css/ol.css",
+        "remote": true
     }],
 
     /**

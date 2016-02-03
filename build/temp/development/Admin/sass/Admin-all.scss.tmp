@@ -35,6 +35,7 @@ $include-admin-model-subscription: dynamic(true);;
 $include-admin-model-yearwisedata: dynamic(true);;
 $include-admin-model-email-email: dynamic(true);;
 $include-admin-model-email-friend: dynamic(true);;
+$include-admin-model-geo-layer: dynamic(true);;
 $include-admin-model-search-result: dynamic(true);;
 $include-admin-model-search-user: dynamic(true);;
 $include-admin-override-menu-item: dynamic(true);;

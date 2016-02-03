@@ -14,6 +14,10 @@ Ext.define("Admin.view.geo.MapPanel", {
         type: "geo-map"
     },
 
+    listeners: {
+        beforedeactivate: 'onBeforeDeactivate'
+    },
+
     items: [{
         xtype: 'geo-mapcanvas',
         responsiveCls: 'big-100',
