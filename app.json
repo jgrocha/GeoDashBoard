@@ -556,6 +556,7 @@
             "toolkit": "classic",
             "theme": "theme-triton",
             "requires": [
+                "font-awesome",
                 "GeoExt"
             ]
         }
