@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 The Open Source Geospatial Foundation
+/* Copyright (c) 2015-2016 The Open Source Geospatial Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * A data store holding OpenLayers feature objects.
+ * A data store holding OpenLayers feature objects (`ol.Feature`).
  *
  * @class GeoExt.data.store.Features
  */
@@ -47,35 +47,35 @@ Ext.define('GeoExt.data.store.Features', {
     config: {
 
         /**
-         * Initial layer holding features which will be added to the store
+         * Initial layer holding features which will be added to the store.
          *
          * @cfg {ol.Layer} layer
          */
         /**
+         * The layer object which is in sync with this store.
          * @property {ol.Layer}
          * @readonly
-         * The layer object which is in sync with this store
          */
         layer: null
     },
 
     /**
-     * A map object to which a possible #layer will be added
+     * A map object to which a possible #layer will be added.
      *
      * @cfg {ol.Map}
      */
     map: null,
 
     /**
-     * Set this flag to true will create a vector #layer with the given
-     * #features and ads it to the given #map (if available)
+     * Setting this flag to true will create a vector #layer with the given
+     * #features and adds it to the given #map (if available).
      *
      * @cfg {Boolean}
      */
     createLayer: false,
 
     /**
-     * Shows if the #layer has been created by constructor
+     * Shows if the #layer has been created by constructor.
      *
      * @private
      * @property {Boolean}
@@ -91,20 +91,22 @@ Ext.define('GeoExt.data.store.Features', {
     style: null,
 
     /**
-     * Initial set of features. Has to be an ol.Collection object with
-     * ol.Feature objects in it.
+     * Initial set of features. Has to be an `ol.Collection` object with
+     * `ol.Feature` objects in it.
      *
-     * @cfg {ol.Collection<ol.Feature>}
+     * @cfg {ol.Collection}
      */
     features: null,
 
 
     /**
-     * TODO
+     * Constructs the feature store.
+     *
+     * @param {Object} config The configuration object.
      */
     constructor: function(config) {
-        var me = this,
-            cfg = config || {};
+        var me = this;
+        var cfg = config || {};
 
         if (me.style === null) {
             me.style = new ol.style.Style({
@@ -121,15 +123,15 @@ Ext.define('GeoExt.data.store.Features', {
             });
         }
 
-        if(cfg.features) {
+        if (cfg.features) {
             cfg.data = cfg.features;
-        } else if(cfg.layer && cfg.layer instanceof ol.layer.Vector) {
-            if(cfg.layer.getSource()) {
+        } else if (cfg.layer && cfg.layer instanceof ol.layer.Vector) {
+            if (cfg.layer.getSource()) {
                 cfg.data = cfg.layer.getSource().getFeatures();
             }
         }
 
-        if(!cfg.data) {
+        if (!cfg.data) {
             cfg.data = new ol.Collection();
         }
 
@@ -146,8 +148,8 @@ Ext.define('GeoExt.data.store.Features', {
     /**
      * Returns the FeatureCollection which is in sync with this store.
      *
-     * @return {ol.Collection<ol.Featrues>} The underlying OpenLayers
-     *     FeatureCollection
+     * @return {ol.Collection} The underlying OpenLayers `ol.Collection` of
+     *     `ol.Feature`.
      */
     getFeatures: function() {
         return this.olCollection;
@@ -156,7 +158,7 @@ Ext.define('GeoExt.data.store.Features', {
     /**
      * Returns the record corresponding to a feature.
      *
-     * @param  {ol.Feature} feature An ol.Feature object to get the record for
+     * @param {ol.Feature} feature An ol.Feature object to get the record for
      * @return {Ext.data.Model} The model instance corresponding to the feature
      */
     getByFeature: function(feature) {
@@ -201,7 +203,7 @@ Ext.define('GeoExt.data.store.Features', {
             style: me.style
         });
         // add layer to connected map, if available
-        if(me.map) {
+        if (me.map) {
             me.map.addLayer(me.layer);
         }
 
@@ -214,9 +216,9 @@ Ext.define('GeoExt.data.store.Features', {
      *
      * @private
      */
-    bindLayerEvents: function () {
+    bindLayerEvents: function() {
         var me = this;
-        if(me.layer && me.layer.getSource() instanceof ol.source.Vector) {
+        if (me.layer && me.layer.getSource() instanceof ol.source.Vector) {
             // bind feature add / remove events of the layer
             me.layer.getSource().on('addfeature', me.onFeaturesAdded, me);
             me.layer.getSource().on('removefeature', me.onFeaturesRemoved, me);
@@ -228,9 +230,9 @@ Ext.define('GeoExt.data.store.Features', {
      *
      * @private
      */
-    unbindLayerEvents: function () {
+    unbindLayerEvents: function() {
         var me = this;
-        if(me.layer && me.layer.getSource() instanceof ol.source.Vector) {
+        if (me.layer && me.layer.getSource() instanceof ol.source.Vector) {
             // unbind feature add / remove events of the layer
             me.layer.getSource().un('addfeature', me.onFeaturesAdded, me);
             me.layer.getSource().un('removefeature', me.onFeaturesRemoved, me);
@@ -240,20 +242,20 @@ Ext.define('GeoExt.data.store.Features', {
     /**
      * Handler for #layer 'addfeature' event.
      *
-     * @param {Object} evt the event object of OpenLayers
+     * @param {Object} evt The event object of OpenLayers.
      * @private
      */
-    onFeaturesAdded: function (evt) {
+    onFeaturesAdded: function(evt) {
         this.add(evt.feature);
     },
 
     /**
      * Handler for #layer 'removefeature' event.
      *
-     * @param {Object} evt the event object of OpenLayers
+     * @param {Object} evt The event object of OpenLayers.
      * @private
      */
-    onFeaturesRemoved: function (evt) {
+    onFeaturesRemoved: function(evt) {
         var me = this;
         if (!me._removing) {
             var record = me.getByFeature(evt.feature);

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 The Open Source Geospatial Foundation
+/* Copyright (c) 2015-2016 The Open Source Geospatial Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,42 +13,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /**
+ * A component that renders an `ol.Map` and that can be used in any ExtJS
+ * layout.
  *
- * The map component and a panel side by side
+ * An example: A map component rendered insiide of a panel:
  *
- *     @example
+ *     @example preview
  *     var mapComponent = Ext.create('GeoExt.component.Map', {
- *         width: 600,
- *         height: 400,
  *         map: new ol.Map({
  *             layers: [
  *                 new ol.layer.Tile({
- *                     source: new ol.source.MapQuest({layer: 'osm'})
+ *                     source: new ol.source.OSM()
  *                 })
  *             ],
  *             view: new ol.View({
- *                 center: ol.proj.transform([-8.751278, 40.611368],
- *                     'EPSG:4326', 'EPSG:3857'),
+ *                 center: ol.proj.fromLonLat([-8.751278, 40.611368]),
  *                 zoom: 12
  *             })
  *         })
  *     });
  *     var mapPanel = Ext.create('Ext.panel.Panel', {
  *         title: 'GeoExt.component.Map Example',
- *         layout: 'fit',
+ *         height: 200,
  *         items: [mapComponent],
  *         renderTo: Ext.getBody()
  *     });
  *
  * @class GeoExt.component.Map
  */
-Ext.define("GeoExt.component.Map", {
-    extend: "Ext.Component",
+Ext.define('GeoExt.component.Map', {
+    extend: 'Ext.Component',
     alias: [
-        "widget.gx_map",
-        "widget.gx_component_map"
+        'widget.gx_map',
+        'widget.gx_component_map'
     ],
     requires: [
         'GeoExt.data.store.Layers'
@@ -94,7 +92,6 @@ Ext.define("GeoExt.component.Map", {
      *     the center of the tolerance bounds (itself configurable with the the
      *     configuration #pointerRestPixelTolerance). If this is null, a
      *     completely *new* pointerrest event just happened.
-     *
      */
 
     /**
@@ -186,7 +183,7 @@ Ext.define("GeoExt.component.Map", {
 
         me.callParent([config]);
 
-        if(!(me.getMap() instanceof ol.Map)){
+        if (!(me.getMap() instanceof ol.Map)) {
             var olMap = new ol.Map({
                 view: new ol.View({
                     center: [0, 0],
@@ -197,7 +194,7 @@ Ext.define("GeoExt.component.Map", {
         }
 
         me.layerStore = Ext.create('GeoExt.data.store.Layers', {
-            storeId: me.getId() + "-store",
+            storeId: me.getId() + '-store',
             map: me.getMap()
         });
 
@@ -207,10 +204,10 @@ Ext.define("GeoExt.component.Map", {
     /**
      * (Re-)render the map when size changes.
      */
-    onResize: function(){
+    onResize: function() {
         // Get the corresponding view of the controller (the mapComponent).
         var me = this;
-        if(!me.mapRendered){
+        if (!me.mapRendered) {
             var el = me.getTargetEl ? me.getTargetEl() : me.element;
             me.getMap().setTarget(el.dom);
             me.mapRendered = true;
@@ -235,7 +232,7 @@ Ext.define("GeoExt.component.Map", {
      * @param {ol.MapBrowserEvent} olEvt The MapBrowserEvent event.
      * @private
      */
-    unbufferedPointerMove: function(olEvt){
+    unbufferedPointerMove: function(olEvt) {
         var me = this;
         var tolerance = me.getPointerRestPixelTolerance();
         var pixel = olEvt.pixel;
@@ -269,7 +266,7 @@ Ext.define("GeoExt.component.Map", {
      *
      * @private
      */
-    registerPointerRestEvents: function(){
+    registerPointerRestEvents: function() {
         var me = this;
         var map = me.getMap();
 
@@ -351,7 +348,7 @@ Ext.define("GeoExt.component.Map", {
      * Unregisters the #bufferedPointerMove event listener and unbinds the
      * over- and out-listeners.
      */
-    unregisterPointerRestEvents: function(){
+    unregisterPointerRestEvents: function() {
         var map = this.getMap();
         this.unbindOverOutListeners();
         if (map) {
@@ -378,36 +375,36 @@ Ext.define("GeoExt.component.Map", {
     /**
      * Returns the center coordinate of the view.
      *
-     * @return {ol.Coordinate}
+     * @return {ol.Coordinate} The center of the map view as `ol.Coordinate`.
      */
-    getCenter: function(){
+    getCenter: function() {
         return this.getMap().getView().getCenter();
     },
 
     /**
      * Set the center of the view.
      *
-     * @param {ol.Coordinate} center
+     * @param {ol.Coordinate} center The new center as `ol.Coordinate`.
      */
-    setCenter: function(center){
+    setCenter: function(center) {
         this.getMap().getView().setCenter(center);
     },
 
     /**
      * Returns the extent of the current view.
      *
-     * @return {ol.Extent}
+     * @return {ol.Extent} The extent of the map view as `ol.Extent`.
      */
-    getExtent: function(){
+    getExtent: function() {
         return this.getView().calculateExtent(this.getMap().getSize());
     },
 
     /**
      * Set the extent of the view.
      *
-     * @param {ol.Extent} extent
+     * @param {ol.Extent} extent The extent as `ol.Extent`.
      */
-    setExtent: function(extent){
+    setExtent: function(extent) {
         this.getView().fit(extent, this.getMap().getSize());
     },
 
@@ -416,64 +413,64 @@ Ext.define("GeoExt.component.Map", {
      *
      * @return {ol.Collection} The layer collection.
      */
-    getLayers: function(){
+    getLayers: function() {
         return this.getMap().getLayers();
     },
 
     /**
      * Add a layer to the map.
      *
-     * @param {ol.layer.Base} layer
+     * @param {ol.layer.Base} layer The layer to add.
      */
-    addLayer: function(layer){
-        if(layer instanceof ol.layer.Base){
+    addLayer: function(layer) {
+        if (layer instanceof ol.layer.Base) {
             this.getMap().addLayer(layer);
         } else {
-            Ext.Error.raise('Can not add layer ' + layer + ' cause it is not ' +
+            Ext.Error.raise('Can not add layer ' + layer + ' as it is not ' +
                 'an instance of ol.layer.Base');
         }
     },
 
     /**
-     * Add a layer to the map.
+     * Remove a layer from the map.
      *
-     * @param {ol.layer.Base} layer
+     * @param {ol.layer.Base} layer The layer to remove.
      */
-    removeLayer: function(layer){
-        if(layer instanceof ol.layer.Base){
-            if(Ext.Array.contains(this.getLayers().getArray(), layer)){
+    removeLayer: function(layer) {
+        if (layer instanceof ol.layer.Base) {
+            if (Ext.Array.contains(this.getLayers().getArray(), layer)) {
                 this.getMap().removeLayer(layer);
             }
         } else {
-            Ext.Error.raise('Can not add layer ' + layer + ' cause it is not ' +
+            Ext.Error.raise('Can not add layer ' + layer + ' as it is not ' +
                 'an instance of ol.layer.Base');
         }
     },
 
     /**
-     * Returns the GeoExt.data.store.Layers
+     * Returns the GeoExt.data.store.Layers.
      *
-     * @return {GeoExt.data.store.Layers}
+     * @return {GeoExt.data.store.Layers} The layer store.
      */
-    getStore: function(){
+    getStore: function() {
         return this.layerStore;
     },
 
     /**
      * Returns the view of the map.
      *
-     * @return {ol.View}
+     * @return {ol.View} The `ol.View` of the map.
      */
-    getView: function(){
+    getView: function() {
         return this.getMap().getView();
     },
 
     /**
      * Set the view of the map.
      *
-     * @param {ol.View} view
+     * @param {ol.View} view The `ol.View` to use for the map.
      */
-    setView: function(view){
+    setView: function(view) {
         this.getMap().setView(view);
     }
 });

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 The Open Source Geospatial Foundation
+/* Copyright (c) 2015-2016 The Open Source Geospatial Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,22 +14,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
+ * A {@link GeoExt.data.model.print.Layout Layout} of a mapfish print service
+ * has many layout attributes. You can create correct instances of this class
+ * by using the GeoExt.data.MapfishPrintProvider.
+ *
  * @class GeoExt.data.model.print.LayoutAttribute
  */
 Ext.define('GeoExt.data.model.print.LayoutAttribute', {
     extend: 'GeoExt.data.model.Base',
+
+    /**
+     * @method getLayout
+     * Returns the attribute parent layout model. May be null if
+     * LayoutAttribute is instantiated directly.
+     * @return {GeoExt.data.model.print.Layout} The attributes layout
+     */
+
     fields: [
+        {name: 'name', type: 'string'},
+        {name: 'type', type: 'string'},
+        {name: 'clientInfo', type: 'auto'},
         {
-            name: 'name',
-            type: 'string'
-        },
-        {
-            name: 'type',
-            type: 'string'
-        },
-        {
-            name: 'clientInfo',
-            type: 'auto'
+            name: 'layoutId',
+            reference: {
+                type: 'print.Layout',
+                inverse: 'attributes'
+            }
         }
     ]
 });

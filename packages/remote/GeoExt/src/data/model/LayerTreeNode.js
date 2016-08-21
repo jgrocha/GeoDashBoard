@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 The Open Source Geospatial Foundation
+/* Copyright (c) 2015-2016 The Open Source Geospatial Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * The layer model class used by the stores.
+ * The layer tree node class used by the stores used in trees.
  *
  * @class GeoExt.data.model.LayerTreeNode
  */
@@ -36,27 +36,25 @@ Ext.define('GeoExt.data.model.LayerTreeNode', {
     ],
     // </debug>
 
-    fields: [
-        {
-            name: 'leaf',
-            type: 'boolean',
-            convert: function(v, record) {
-                var isGroup = record.get('isLayerGroup');
-                if (isGroup === undefined || isGroup) {
-                    return false;
-                } else {
-                    return true;
-                }
+    fields: [{
+        name: 'leaf',
+        type: 'boolean',
+        convert: function(v, record) {
+            var isGroup = record.get('isLayerGroup');
+            if (isGroup === undefined || isGroup) {
+                return false;
+            } else {
+                return true;
             }
-        }, {
-            /**
-             * This should be set via tree panel.
-             */
-            name: '__toggleMode',
-            type: 'string',
-            defaultValue: 'classic'
         }
-    ],
+    }, {
+        /**
+         * This should be set via tree panel.
+         */
+        name: '__toggleMode',
+        type: 'string',
+        defaultValue: 'classic'
+    }],
 
     proxy: {
         type: 'memory',
@@ -66,7 +64,7 @@ Ext.define('GeoExt.data.model.LayerTreeNode', {
     },
 
     /**
-     * TODO
+     * @inheritDoc
      */
     constructor: function() {
         var layer;
@@ -81,7 +79,9 @@ Ext.define('GeoExt.data.model.LayerTreeNode', {
     },
 
     /**
-     * TODO
+     * Handler for the `change:visible` event of the layer.
+     *
+     * @param {ol.ObjectEvent} evt The emitted `ol.Object` event.
      */
     onLayerVisibleChange: function(evt) {
         var target = evt.target;
@@ -92,26 +92,28 @@ Ext.define('GeoExt.data.model.LayerTreeNode', {
     },
 
     /**
-     * Overriden to foward changes to the underlying ol.Object. All changes on
-     * the Ext.data.Models properties will be set on the ol.Object as well.
+     * Overriden to forward changes to the underlying `ol.Object`. All changes
+     * on the {Ext.data.Model} properties will be set on the `ol.Object` as
+     * well.
      *
-     * @param {String} key
-     * @param {Object} value
-     * @param {Object} options
+     * @param {String} key The key to set.
+     * @param {Object} newValue The value to set.
      *
      * @inheritdoc
      */
     set: function(key, newValue) {
         var me = this;
+        var classicMode = (me.get('__toggleMode') === 'classic');
+
         me.callParent(arguments);
 
         // forward changes to ol object
         if (key === 'checked') {
             me.__updating = true;
-            if(me.get('isLayerGroup') && me.get('__toggleMode') === 'classic'){
+            if (me.get('isLayerGroup') && classicMode) {
                 me.getOlLayer().set('visible', newValue);
-                if(me.childNodes){
-                    me.eachChild(function(child){
+                if (me.childNodes) {
+                    me.eachChild(function(child) {
                         child.getOlLayer().set('visible', newValue);
                     });
                 }
@@ -120,26 +122,27 @@ Ext.define('GeoExt.data.model.LayerTreeNode', {
             }
             me.__updating = false;
 
-            if(me.get('__toggleMode') === 'classic'){
+            if (classicMode) {
                 me.toggleParentNodes(newValue);
             }
         }
     },
 
     /**
-     * Handles Parentbehaviour of checked Nodes:
-     * Checks parent Nodes if node is checked or unchecks parent Nodes if the
-     * node is unchecked and no sibling is checked.
+     * Handles parent behaviour of checked nodes: Checks parent Nodes if node
+     * is checked or unchecks parent nodes if the node is unchecked and no
+     * sibling is checked.
+     *
+     * @param {Boolean} newValue The newValue to pass through to the parent.
      * @private
-     * @param {Boolean} newValue
      */
-    toggleParentNodes: function(newValue){
+    toggleParentNodes: function(newValue) {
         var me = this;
         // Checks parent Nodes if node is checked.
-        if(newValue === true){
+        if (newValue === true) {
             me.__updating = true;
-            me.bubble(function(parent){
-                if(!parent.isRoot()){
+            me.bubble(function(parent) {
+                if (!parent.isRoot()) {
                     parent.set('__toggleMode', 'ol3'); // prevents recursion
                     parent.set('checked', true);
                     parent.set('__toggleMode', 'classic');
@@ -150,17 +153,17 @@ Ext.define('GeoExt.data.model.LayerTreeNode', {
 
         // Unchecks parent Nodes if the node is unchecked and no sibling is
         // checked.
-        if(newValue === false){
+        if (newValue === false) {
             me.__updating = true;
-            me.bubble(function(parent){
-                if(!parent.isRoot()){
+            me.bubble(function(parent) {
+                if (!parent.isRoot()) {
                     var allUnchecked = true;
-                    parent.eachChild(function(child){
-                        if(child.get('checked')){
+                    parent.eachChild(function(child) {
+                        if (child.get('checked')) {
                             allUnchecked = false;
                         }
                     });
-                    if (allUnchecked){
+                    if (allUnchecked) {
                         parent.set('__toggleMode', 'ol3'); // prevents recursion
                         parent.set('checked', false);
                         parent.set('__toggleMode', 'classic');
@@ -185,7 +188,7 @@ Ext.define('GeoExt.data.model.LayerTreeNode', {
         return this.parentNode;
     }
 
-}, function () {
+}, function() {
     // make this an Ext.data.TreeModel
     Ext.data.NodeInterface.decorate(this);
 });

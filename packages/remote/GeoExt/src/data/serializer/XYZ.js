@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 The Open Source Geospatial Foundation
+/* Copyright (c) 2015-2016 The Open Source Geospatial Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  /**
-  * A serializer for layer that hava a `ol.source.XYZ` source.
+  * A serializer for layers that have an `ol.source.XYZ` source.
+  * Sources with an tileUrlFunction are currently not supported.
   *
   * @class GeoExt.data.serializer.XYZ
   */
@@ -36,6 +37,11 @@ Ext.define('GeoExt.data.serializer.XYZ', {
 
     inheritableStatics: {
         /**
+         *
+         */
+        allowedImageExtensions: ['png','jpg','gif'],
+
+        /**
          * @inheritdoc
          */
         sourceCls: ol.source.XYZ,
@@ -45,11 +51,11 @@ Ext.define('GeoExt.data.serializer.XYZ', {
          */
         validateSource: function(source) {
             if (!(source instanceof this.sourceCls)) {
-                Ext.raise("Cannot serialize this source with this serializer");
+                Ext.raise('Cannot serialize this source with this serializer');
             }
             if (source.getUrls() === null) {
-                Ext.raise("Cannot serialize this source without an URL. " +
-                    "Usage of tileUrlFunction is not yet supported");
+                Ext.raise('Cannot serialize this source without an URL. ' +
+                    'Usage of tileUrlFunction is not yet supported');
             }
         },
 
@@ -60,15 +66,40 @@ Ext.define('GeoExt.data.serializer.XYZ', {
             this.validateSource(source);
             var tileGrid = source.getTileGrid();
             var serialized = {
-                "baseURL": source.getUrls()[0],
-                "opacity": layer.getOpacity(),
-                "resolutions": tileGrid.getResolutions(),
-                "tileSize": ol.size.toSize(tileGrid.getTileSize()),
-                "type": "OSM"
+                baseURL: source.getUrls()[0],
+                opacity: layer.getOpacity(),
+                imageExtension: this.getImageExtensionFromSource(source)
+                    || 'png',
+                resolutions: tileGrid.getResolutions(),
+                tileSize: ol.size.toSize(tileGrid.getTileSize()),
+                type: 'OSM'
             };
             return serialized;
+        },
+
+        /**
+         * Returns the file extension from the url and compares it to whitelist.
+         * Sources with an tileUrlFunction are currently not supported.
+         *
+         * @private
+         * @param {ol.source.XYZ} source An ol.source.XYZ.
+         * @return {String} The fileExtension or `false` if none is found.
+         */
+        getImageExtensionFromSource: function(source) {
+            var urls = source.getUrls();
+            var url = urls ? urls[0] : '';
+            var extension = url.substr(url.length - 3);
+
+            if (Ext.isDefined(url)
+                && Ext.Array.contains(this.allowedImageExtensions, extension)) {
+                return extension;
+            } else {
+                Ext.raise('No url(s) supplied for ', source);
+                return false;
+            }
         }
     }
+
 }, function(cls) {
     // Register this serializer via the inherited method `register`.
     cls.register(cls);

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 The Open Source Geospatial Foundation
+/* Copyright (c) 2015-2016 The Open Source Geospatial Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,9 +58,9 @@ Ext.define('GeoExt.data.store.OlObjects', {
          * @inheritdoc
          */
         add: function(store, records, index) {
-            var coll = store.olCollection,
-                length = records.length,
-                i;
+            var coll = store.olCollection;
+            var length = records.length;
+            var i;
 
             store.__updating = true;
             for (i = 0; i < length; i++) {
@@ -75,9 +75,9 @@ Ext.define('GeoExt.data.store.OlObjects', {
          * @inheritdoc
          */
         remove: function(store, records, index) {
-            var coll = store.olCollection,
-                length = records.length,
-                i;
+            var coll = store.olCollection;
+            var length = records.length;
+            var i;
 
             store.__updating = true;
             for (i = 0; i < length; i++) {
@@ -88,7 +88,9 @@ Ext.define('GeoExt.data.store.OlObjects', {
     },
 
     /**
-     * TODO
+     * Constructs a new OlObjects store.
+     *
+     * @param {Object} config The configuration object.
      */
     constructor: function(config) {
         config = config || {};
@@ -111,14 +113,14 @@ Ext.define('GeoExt.data.store.OlObjects', {
     },
 
     /**
-     * Forwards changes to the ol.Collection to the Ext.data.Store.
+     * Forwards changes to the `ol.Collection` to the Ext.data.Store.
      *
-     * @param {ol.CollectionEvent} evt
+     * @param {ol.CollectionEvent} evt The event emitted by the `ol.Collection`.
      */
     onOlCollectionAdd: function(evt) {
-        var target = evt.target,
-            element = evt.element,
-            idx = Ext.Array.indexOf(target.getArray(), element);
+        var target = evt.target;
+        var element = evt.element;
+        var idx = Ext.Array.indexOf(target.getArray(), element);
 
         if (!this.__updating) {
             this.insert(idx, element);
@@ -126,15 +128,15 @@ Ext.define('GeoExt.data.store.OlObjects', {
     },
 
     /**
-     * Forwards changes to the ol.Collection to the Ext.data.Store.
+     * Forwards changes to the `ol.Collection` to the Ext.data.Store.
      *
-     * @param {ol.CollectionEvent} evt
+     * @param {ol.CollectionEvent} evt The event emitted by the `ol.Collection`.
      */
     onOlCollectionRemove: function(evt) {
-        var element = evt.element,
-            idx = this.findBy(function(rec) {
-                return rec.olObject === element;
-            });
+        var element = evt.element;
+        var idx = this.findBy(function(rec) {
+            return rec.olObject === element;
+        });
 
         if (idx !== -1) {
             if (!this.__updating) {

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 The Open Source Geospatial Foundation
+/* Copyright (c) 2015-2016 The Open Source Geospatial Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
  */
 
 /**
- * A store that is synchronized with a GeoExt.data.store.Layers. It can be used
- * by an Ext.tree.Panel.
+ * A store that is synchronized with a GeoExt.data.store.Layers. It can be
+ * used by an {Ext.tree.Panel}.
  *
  * @class GeoExt.data.store.LayersTree
  */
@@ -58,26 +58,19 @@ Ext.define('GeoExt.data.store.LayersTree', {
         layerGroup: null,
 
         /**
-         * The layer property that will be used to label tree nodes.
+         * Configures the behaviour of the checkbox of an `ol.layer.Group`
+         * (folder). Possible values are `'classic'` or `'ol3'`.
          *
-         * @cfg {String}
-         */
-        textProperty: 'name',
-
-        /**
-         * Configures the behaviour of the checkbox of an ol.layer.Group
-         * (folder). Possible values are 'classic' or 'ol3'.
-         * 'classic' forwards the checkstate to the children of the folder.
-         * 'ol3' emulates the behaviour of ol.layer.Group. So an layerGroup can
-         * be invisible but can have visible children.
-         * 'classic':
-         *   - Check a leaf --> all parent nodes are checked
-         *   - Uncheck all leafs in a folder --> parent node is unchecked
-         *   - Check a folder Node --> all children are checked
-         *   - Uncheck a folder Node --> all children are unchecked
-         * 'ol3':
-         *   - Emulates the behaviour of an ol.layer.Group, so a parentfolder
+         * * `'classic'` forwards the checkstate to the children of the folder.
+         *   * Check a leaf => all parent nodes are checked
+         *   * Uncheck all leafs in a folder => parent node is unchecked
+         *   * Check a folder Node => all children are checked
+         *   * Uncheck a folder Node => all children are unchecked
+         * * `'ol3'` emulates the behaviour of `ol.layer.Group`. So a layerGroup
+         *   can be invisible but can have visible children.
+         *   * Emulates the behaviour of an `ol.layer.Group,` so a parentfolder
          *     can be unchecked but still contain checked leafs and vice versa.
+         *
          * @cfg
          */
         folderToggleMode: 'classic'
@@ -127,7 +120,10 @@ Ext.define('GeoExt.data.store.LayersTree', {
         expanded: true
     },
 
-    constructor: function(){
+    /**
+     * Constructs a LayersTree store.
+     */
+    constructor: function() {
         var me = this;
         me.callParent(arguments);
 
@@ -148,35 +144,38 @@ Ext.define('GeoExt.data.store.LayersTree', {
     },
 
     /**
-     * Apllies the folderToggleMode to the treenodes.
+     * Applies the #folderToggleMode to the treenodes.
+     *
+     * @param {String} folderToggleMode The folderToggleMode that was set.
+     * @return {String} The folderToggleMode that was set.
      * @private
      */
-    applyFolderToggleMode: function(folderToggleMode){
-        if(folderToggleMode === 'classic' || folderToggleMode === 'ol3'){
+    applyFolderToggleMode: function(folderToggleMode) {
+        if (folderToggleMode === 'classic' || folderToggleMode === 'ol3') {
             var rootNode = this.getRootNode();
-            if(rootNode){
+            if (rootNode) {
                 rootNode.cascadeBy({
-                    before: function(child){
+                    before: function(child) {
                         child.set('__toggleMode', folderToggleMode);
                     }
                 });
             }
-        } else {
-            Ext.raise("Invalid folderToggleMode set in " + this.self.getName()
-                + ": " + folderToggleMode + ". 'classic' or 'ol3' are valid.");
+            return folderToggleMode;
         }
-        return folderToggleMode;
+
+        Ext.raise('Invalid folderToggleMode set in ' + this.self.getName()
+            + ': ' + folderToggleMode + '; \'classic\' or \'ol3\' are valid.');
     },
 
     /**
-     * Listens to the remove event and syncs the attached layergroup.
+     * Listens to the `remove` event and syncs the attached layergroup.
      *
      * @param {GeoExt.data.store.LayersTree} store The layer store.
      * @param {GeoExt.data.model.LayerTreeNode[]} records An array of the
      *     removed nodes.
      * @private
      */
-    handleRemove: function(store, records){
+    handleRemove: function(store, records) {
         var me = this;
         var keyRemoveOptOut = me.self.KEY_COLLAPSE_REMOVE_OPT_OUT;
         me.suspendCollectionEvents();
@@ -186,7 +185,7 @@ Ext.define('GeoExt.data.store.LayersTree', {
                 return;
             }
             var layerOrGroup = record.getOlLayer();
-            if(layerOrGroup instanceof ol.layer.Group){
+            if (layerOrGroup instanceof ol.layer.Group) {
                 me.unbindGroupLayerCollectionEvents(layerOrGroup);
             }
             var group = GeoExt.util.Layer.findParentGroup(
@@ -203,20 +202,20 @@ Ext.define('GeoExt.data.store.LayersTree', {
     },
 
     /**
-     * Listens to the noderemove event. Updates the tree with the current
+     * Listens to the `noderemove` event. Updates the tree with the current
      * map state.
      *
-     * @param {GeoExt.data.model.LayerTreeNode} parentNode
-     * @param {GeoExt.data.model.LayerTreeNode} removedNode
+     * @param {GeoExt.data.model.LayerTreeNode} parentNode The parent node.
+     * @param {GeoExt.data.model.LayerTreeNode} removedNode The removed node.
      * @private
      */
-    handleNodeRemove: function(parentNode, removedNode){
+    handleNodeRemove: function(parentNode, removedNode) {
         var me = this;
         var layerOrGroup = removedNode.getOlLayer();
         if (!layerOrGroup) {
             layerOrGroup = me.getLayerGroup();
         }
-        if(layerOrGroup instanceof ol.layer.Group){
+        if (layerOrGroup instanceof ol.layer.Group) {
             removedNode.un('beforecollapse', me.onBeforeGroupNodeCollapse);
             me.unbindGroupLayerCollectionEvents(layerOrGroup);
         }
@@ -231,7 +230,15 @@ Ext.define('GeoExt.data.store.LayersTree', {
         }
     },
 
-    handleNodeAppend: function(parentNode, appendedNode){
+    /**
+     * Listens to the `nodeappend` event. Updates the tree with the current
+     * map state.
+     *
+     * @param {GeoExt.data.model.LayerTreeNode} parentNode The parent node.
+     * @param {GeoExt.data.model.LayerTreeNode} appendedNode The appended node.
+     * @private
+     */
+    handleNodeAppend: function(parentNode, appendedNode) {
         var me = this;
         var group = parentNode.getOlLayer();
         var layer = appendedNode.getOlLayer();
@@ -255,7 +262,17 @@ Ext.define('GeoExt.data.store.LayersTree', {
         }
     },
 
-    handleNodeInsert: function(parentNode, insertedNode, insertedBefore){
+    /**
+     * Listens to the `nodeinsert` event. Updates the tree with the current
+     * map state.
+     *
+     * @param {GeoExt.data.model.LayerTreeNode} parentNode The parent node.
+     * @param {GeoExt.data.model.LayerTreeNode} insertedNode The inserted node.
+     * @param {GeoExt.data.model.LayerTreeNode} insertedBefore The node we were
+     *     inserted before.
+     * @private
+     */
+    handleNodeInsert: function(parentNode, insertedNode, insertedBefore) {
         var me = this;
         var group = parentNode.getOlLayer();
         if (!group) {
@@ -283,11 +300,11 @@ Ext.define('GeoExt.data.store.LayersTree', {
     },
 
     /**
-     * Adds a layer as a node to the store. It can be an ol.layer.Base.
+     * Adds a layer as a node to the store. It can be an `ol.layer.Base`.
      *
-     * @param {Ext.data.NodeInterface} node
+     * @param {ol.layer.Base} layerOrGroup The layer or layer group to add.
      */
-    addLayerNode: function(layerOrGroup){
+    addLayerNode: function(layerOrGroup) {
         var me = this;
         // 2. get group to which the layer was added
         var group = GeoExt.util.Layer.findParentGroup(
@@ -309,7 +326,7 @@ Ext.define('GeoExt.data.store.LayersTree', {
         if (group === me.getLayerGroup()) {
             parentNode = me.getRootNode();
         } else {
-            parentNode = me.getRootNode().findChildBy(function(candidate){
+            parentNode = me.getRootNode().findChildBy(function(candidate) {
                 return candidate.getOlLayer() === group;
             }, me, true);
         }
@@ -318,18 +335,14 @@ Ext.define('GeoExt.data.store.LayersTree', {
         }
 
         // 5. insert a new layer node at the specified index to that node
-        var layerNode = Ext.create('GeoExt.data.model.LayerTreeNode',
-            layerOrGroup
-        );
-        layerNode.set('text', layerOrGroup.get(me.getTextProperty()));
-        layerNode.commit();
-
-        parentNode.insertChild(layerIdx, layerNode);
+        var layerNode = parentNode.insertChild(layerIdx, layerOrGroup);
 
         if (layerOrGroup instanceof ol.layer.Group) {
             // See onBeforeGroupNodeCollapse for an explanation why we have this
             layerNode.on('beforecollapse', me.onBeforeGroupNodeCollapse, me);
-            layerOrGroup.getLayers().forEach(me.addLayerNode, me);
+
+            var childLayers = layerOrGroup.getLayers().getArray();
+            Ext.each(childLayers, me.addLayerNode, me, me.inverseLayerOrder);
         }
     },
 
@@ -338,22 +351,22 @@ Ext.define('GeoExt.data.store.LayersTree', {
      * the beforecollapse event. Whenever a folder gets collapsed, ExtJS seems
      * to actually remove the children from the store, triggering the removal
      * of the actual layers in the map. This is an undesired behviour. We handle
-     * this as follows. Before the collapsing happens, we mark the childNodes,
+     * this as follows: Before the collapsing happens, we mark the childNodes,
      * so we effectively opt-out in #handleRemove.
      *
      * @param {Ext.data.NodeInterface} node The collapsible folder node.
      * @private
      */
-    onBeforeGroupNodeCollapse: function(node){
+    onBeforeGroupNodeCollapse: function(node) {
         var keyRemoveOptOut = this.self.KEY_COLLAPSE_REMOVE_OPT_OUT;
-        node.cascadeBy(function(child){
+        node.cascadeBy(function(child) {
             child[keyRemoveOptOut] = true;
         });
     },
 
     /**
      * A utility method which binds collection change events to the passed layer
-     * if it is a ol.layer.Group.
+     * if it is a `ol.layer.Group`.
      *
      * @param {ol.layer.Base} layerOrGroup The layer to probably bind event
      *     listeners for collection change events to.
@@ -371,7 +384,7 @@ Ext.define('GeoExt.data.store.LayersTree', {
 
     /**
      * A utility method which unbinds collection change events from the passed
-     * layer if it is a ol.layer.Group.
+     * layer if it is a `ol.layer.Group`.
      *
      * @param {ol.layer.Base} layerOrGroup The layer to probably unbind event
      *     listeners for collection change events from.
@@ -388,11 +401,14 @@ Ext.define('GeoExt.data.store.LayersTree', {
     },
 
     /**
-     *  Remove children from rootNode and read the layerGroup-collection.
+     * Handles the `add` event of a managed `ol.layer.Group` and eventually
+     * removes the appropriate node.
      *
-     *  @private
+     * @param {ol.CollectionEvent} evt The event object holding a reference to
+     *     the relevant `ol.layer.Base`.
+     * @private
      */
-    onLayerCollectionAdd: function(evt){
+    onLayerCollectionAdd: function(evt) {
         var me = this;
         if (me.collectionEventsSuspended) {
             return;
@@ -402,8 +418,15 @@ Ext.define('GeoExt.data.store.LayersTree', {
         me.bindGroupLayerCollectionEvents(layerOrGroup);
     },
 
-
-    onLayerCollectionRemove: function(evt){
+    /**
+     * Handles the `remove` event of a managed `ol.layer.Group` and eventually
+     * removes the appropriate node.
+     *
+     * @param {ol.CollectionEvent} evt The event object holding a reference to
+     *     the relevant `ol.layer.Base`.
+     * @private
+     */
+    onLayerCollectionRemove: function(evt) {
         var me = this;
         if (me.collectionEventsSuspended) {
             return;
@@ -412,11 +435,11 @@ Ext.define('GeoExt.data.store.LayersTree', {
         // 1. find the node that existed for that layer
         var node = me.getRootNode().findChildBy(function(candidate) {
             return candidate.getOlLayer() === layerOrGroup;
-        });
+        }, me, true);
         if (!node) {
             return;
         }
-        // 2. if grouplayer: cascade down and remove any possible listeners?
+        // 2. if grouplayer: cascade down and remove any possible listeners
         if (layerOrGroup instanceof ol.layer.Group) {
             me.unbindGroupLayerCollectionEvents(layerOrGroup);
         }
@@ -431,16 +454,16 @@ Ext.define('GeoExt.data.store.LayersTree', {
      * OpenLayers collections. Use #resumeCollectionEvents to start listening
      * again.
      */
-    suspendCollectionEvents: function(){
+    suspendCollectionEvents: function() {
         this.collectionEventsSuspended = true;
     },
 
     /**
      * Undoes the effect of #suspendCollectionEvents; so that the store is now
-     * listening to change events on the underlying OpenLayers collections.
+     * listening to change events on the underlying OpenLayers collections
      * again.
      */
-    resumeCollectionEvents: function(){
+    resumeCollectionEvents: function() {
         this.collectionEventsSuspended = false;
     }
 });

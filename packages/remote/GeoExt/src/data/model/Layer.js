@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 The Open Source Geospatial Foundation
+/* Copyright (c) 2015-2016 The Open Source Geospatial Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,76 +32,108 @@ Ext.define('GeoExt.data.model.Layer', {
     ],
     // </debug>
 
-    statics: {
-        /**
-         * Convenience function for creating new layer model instance object
-         * using a layer object.
-         *
-         * @param {OpenLayers.Layer} layer
-         * @return {GeoExt.data.LayerModel}
-         * @static
-         */
-        createFromLayer: function(layer) {
-            return this.getProxy().getReader().readRecords([layer]).records[0];
-        }
-    },
+    /**
+     * The layer property that will be used to label the model in views.
+     *
+     * @cfg {String}
+     */
+    textProperty: 'name',
+
+    /**
+     * The layer property that will be used to describe the model in views.
+     *
+     * @cfg {String}
+     */
+    descriptionProperty: 'description',
+
+    /**
+     * The text label that will be shown in model views representing unnamed
+     * layers.
+     *
+     * @cfg {String}
+     */
+    unnamedLayerText: 'Unnamed Layer',
+
+    /**
+     * The text label that will be shown in model views representing unnamed
+     * group layers.
+     *
+     * @cfg {String}
+     */
+    unnamedGroupLayerText: 'Unnamed Group Layer',
+
     fields: [
         {
             name: 'isLayerGroup',
             type: 'boolean',
+            persist: false,
             convert: function(v, record) {
                 var layer = record.getOlLayer();
-
                 if (layer) {
                     return (layer instanceof ol.layer.Group);
+                } else {
+                    return undefined;
                 }
             }
         },
         {
             name: 'text',
             type: 'string',
+            persist: false,
             convert: function(v, record) {
-                if (!v && record.get('isLayerGroup')) {
-                    return 'ol.layer.Group';
-                } else {
-                    return v;
+                var name = v;
+                var defaultName;
+                var textProp;
+
+                if (!name) {
+                    textProp = record.textProperty;
+                    defaultName = (record.get('isLayerGroup')
+                        ? record.unnamedGroupLayerText
+                        : record.unnamedLayerText);
+                    name = record.getOlLayerProp(textProp, defaultName);
                 }
+
+                return name;
             }
         },
         {
             name: 'opacity',
             type: 'number',
+            persist: false,
             convert: function(v, record) {
-                var layer;
-
-                if (record.data instanceof ol.layer.Base) {
-                    layer = record.getOlLayer();
-                    return layer.get('opacity');
-                }
+                return record.getOlLayerProp('opacity');
             }
         },
         {
             name: 'minResolution',
             type: 'number',
-            convert: function(v, record){
-                var layer;
-
-                if (record.data instanceof ol.layer.Base) {
-                    layer = record.getOlLayer();
-                    return layer.get('minResolution');
-                }
+            persist: false,
+            convert: function(v, record) {
+                return record.getOlLayerProp('minResolution');
             }
         },
         {
             name: 'maxResolution',
             type: 'number',
-            convert: function(v, record){
-                var layer;
-
-                if (record.data instanceof ol.layer.Base) {
-                    layer = record.getOlLayer();
-                    return layer.get('maxResolution');
-                }
+            persist: false,
+            convert: function(v, record) {
+                return record.getOlLayerProp('maxResolution');
+            }
+        },
+        {
+            name : 'qtip',
+            type : 'string',
+            persist : false,
+            convert: function(v, record) {
+                return record.getOlLayerProp(record.descriptionProperty, '');
+            }
+        },
+        {
+            name : 'qtitle',
+            type : 'string',
+            persist : false,
+            convert: function(v, record) {
+                return record.get('text');
             }
         }
     ],
@@ -114,13 +146,28 @@ Ext.define('GeoExt.data.model.Layer', {
     },
 
     /**
-     * Returns the {ol.layer.Base} layer object used in this model instance.
+     * Returns the `ol.layer.Base` object used in this model instance.
      *
-     * @return {ol.layer.Base}
+     * @return {ol.layer.Base} The `ol.layer.Base` object.
      */
     getOlLayer: function() {
         if (this.data instanceof ol.layer.Base) {
             return this.data;
         }
+    },
+
+    /**
+     * Returns a property value of the `ol.layer.Base` object used in this model
+     * instance. If the property is null, the optional default value will  be
+     * returned.
+     *
+     * @param  {string} prop         The property key.
+     * @param  {object} defaultValue The optional default value.
+     * @return {object}              The returned property.
+     */
+    getOlLayerProp: function(prop, defaultValue) {
+        var layer = this.getOlLayer();
+        var value = (layer ? layer.get(prop) : undefined);
+        return (value !== undefined ? value : defaultValue);
     }
 });

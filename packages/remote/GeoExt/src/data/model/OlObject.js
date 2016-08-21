@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 The Open Source Geospatial Foundation
+/* Copyright (c) 2015-2016 The Open Source Geospatial Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,12 +38,13 @@ Ext.define('GeoExt.data.model.OlObject', {
         /**
          * Gets a reference to an ol contructor function.
          *
-         * @param {String} str Description of the form "ol.layer.Base"
-         * @return {Function} the ol constructor
+         * @param {String} str Description of the form `"ol.layer.Base"`.
+         * @return {Function} the ol constructor.
+         * @static
          */
         getOlCLassRef: function(str) {
-            var ref = ol,
-                members;
+            var ref = ol;
+            var members;
 
             if (Ext.isString(str)) {
                 members = str.split('.');
@@ -69,7 +70,7 @@ Ext.define('GeoExt.data.model.OlObject', {
     olClass: 'ol.Object',
 
     /**
-     * The underlying ol.Object
+     * The underlying ol.Object.
      *
      * @property {ol.Object}
      */
@@ -84,9 +85,9 @@ Ext.define('GeoExt.data.model.OlObject', {
      * @inheritdoc
      */
     constructor: function(data) {
-        var me = this,
-            statics = this.statics(),
-            OlClass = statics.getOlCLassRef(this.olClass);
+        var me = this;
+        var statics = this.statics();
+        var OlClass = statics.getOlCLassRef(this.olClass);
 
         data = data || {};
 
@@ -104,16 +105,15 @@ Ext.define('GeoExt.data.model.OlObject', {
     },
 
     /**
-     * Listener to propertychange events of the underlying ol.Object.
-     * All changes on the object will be forwarded to the Ext.data.Model.
+     * Listener to propertychange events of the underlying `ol.Object`. All
+     * changes on the object will be forwarded to the Ext.data.Model.
      *
-     * @param  {ol.ObjectEvent} evt
-     *
+     * @param  {ol.ObjectEvent} evt The `ol.ObjectEvent` we receive as handler.
      * @private
      */
     onPropertychange: function(evt) {
-        var target = evt.target,
-            key = evt.key;
+        var target = evt.target;
+        var key = evt.key;
 
         if (!this.__updating) {
             this.set(key, target.get(key));
@@ -121,12 +121,11 @@ Ext.define('GeoExt.data.model.OlObject', {
     },
 
     /**
-     * Overriden to foward changes to the underlying ol.Object. All changes on
-     * the Ext.data.Models properties will be set on the ol.Object as well.
+     * Overriden to foward changes to the underlying `ol.Object`. All changes on
+     * the Ext.data.Models properties will be set on the `ol.Object` as well.
      *
-     * @param {String|Object} key
-     * @param {Object} value
-     * @param {Object} options
+     * @param {String|Object} key The key to set.
+     * @param {Object} newValue The value to set.
      *
      * @inheritdoc
      */
@@ -154,7 +153,7 @@ Ext.define('GeoExt.data.model.OlObject', {
     },
 
     /**
-     * Overriden to un all added event listeners on the ol.Object.
+     * Overriden to unregister all added event listeners on the ol.Object.
      *
      * @inheritdoc
      */

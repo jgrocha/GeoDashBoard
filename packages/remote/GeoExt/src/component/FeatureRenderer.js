@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 The Open Source Geospatial Foundation
+/* Copyright (c) 2015-2016 The Open Source Geospatial Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * The feature renderer
+ * A component that renders a `ol.style.Style` with an optional `ol.Feature`.
+ *
+ *     @example preview
+ *     var poly = Ext.create('GeoExt.component.FeatureRenderer', {
+ *         symbolizers: new ol.style.Style({
+ *             fill: new ol.style.Fill({color: 'red'})
+ *         })
+ *     });
+ *     var line = Ext.create('GeoExt.component.FeatureRenderer', {
+ *         symbolizers: new ol.style.Style({
+ *             stroke: new ol.style.Stroke({color: 'orange', width: 3}),
+ *         }),
+ *         symbolType: 'Line'
+ *     });
+ *     var point = Ext.create('GeoExt.component.FeatureRenderer', {
+ *         symbolizers: new ol.style.Style({
+ *             image: new ol.style.Circle({
+ *                 radius: 7,
+ *                 fill: new ol.style.Fill({color: 'gray'}),
+ *                 stroke: new ol.style.Stroke({color: 'black', width: 3}),
+ *             })
+ *         }),
+ *         symbolType: 'Point'
+ *     });
+ *     var star = Ext.create('GeoExt.component.FeatureRenderer', {
+ *         symbolizers: new ol.style.Style({
+ *             image: new ol.style.RegularShape({
+ *                 fill: new ol.style.Fill({color: 'blue'}),
+ *                 stroke: new ol.style.Stroke({color: 'green', width: 3}),
+ *                 points: 7,
+ *                 radius: 15,
+ *                 radius2: 7,
+ *                 angle: 0
+ *             })
+ *         }),
+ *         minWidth: 40,
+ *         minHeight: 40,
+ *         symbolType: 'Point'
+ *     });
+ *     Ext.create('Ext.panel.Panel', {
+ *         title: 'Rendering of ol.Features in a panel',
+ *         items: [poly, line, point, star],
+ *         border: false,
+ *         renderTo: Ext.getBody()
+ *     });
  *
  * @class GeoExt.component.FeatureRenderer
  */
@@ -54,19 +98,18 @@ Ext.define('GeoExt.component.FeatureRenderer', {
     /**
      * Fires when the feature is clicked on.
      *
-     * Listener arguments:
-     *
-     *  * renderer - GeoExt.component.FeatureRenderer This feature renderer.
-     *
      * @event click
+     * @param {GeoExt.component.FeatureRenderer} renderer The feature renderer.
      */
+
     config: {
         /**
          * Optional class to set on the feature renderer div.
          *
          * @cfg {String}
          */
-        imgCls: "",
+        imgCls: '',
+
         /**
          * The minimum width.
          *
@@ -138,18 +181,19 @@ Ext.define('GeoExt.component.FeatureRenderer', {
          *
          * @cfg {String}
          */
-        symbolType: "Polygon"
+        symbolType: 'Polygon'
     },
+
     /**
-     *
+     * Initialize the GeoExt.component.FeatureRenderer.
      */
-    initComponent: function(){
+    initComponent: function() {
         var me = this;
         var id = this.getId();
         this.autoEl = {
-            tag: "div",
-            "class": this.getImgCls(),
-            id: id
+            'id': id,
+            'tag': 'div',
+            'class': this.getImgCls()
         };
         if (!this.getLineFeature()) {
             this.setLineFeature(new ol.Feature({
@@ -227,7 +271,7 @@ Ext.define('GeoExt.component.FeatureRenderer', {
      */
     initCustomEvents: function() {
         this.clearCustomEvents();
-        this.el.on("click", this.onClick, this);
+        this.el.on('click', this.onClick, this);
     },
     /**
      * Unbinds previously bound listeners on #el.
@@ -245,7 +289,7 @@ Ext.define('GeoExt.component.FeatureRenderer', {
      * @private
      */
     onClick: function() {
-        this.fireEvent("click", this);
+        this.fireEvent('click', this);
     },
     /**
      * Private method called during the destroy sequence.
@@ -293,7 +337,7 @@ Ext.define('GeoExt.component.FeatureRenderer', {
          * 3) if no width or height, assume a resolution of 1
          */
         var resolution = this.initialConfig.resolution;
-        if(!resolution) {
+        if (!resolution) {
             resolution = Math.max(
                 gw / this.width || 0,
                 gh / this.height || 0
@@ -331,7 +375,10 @@ Ext.define('GeoExt.component.FeatureRenderer', {
     /**
      * We're setting the symbolizers on the feature.
      *
-     * @param {ol.style.Style[]|ol.style.Style} symbolizers
+     * @param {ol.style.Style[]|ol.style.Style} symbolizers The style (or
+     *     array of styles) that have been set.
+     * @return {ol.style.Style[]|ol.style.Style} The style (or
+     *     array of styles) that have been set.
      * @private
      */
     applySymbolizers: function(symbolizers) {
@@ -341,10 +388,12 @@ Ext.define('GeoExt.component.FeatureRenderer', {
         }
         return symbolizers;
     },
+
     /**
      * We're setting the feature and add it to the source.
      *
-     * @param {ol.Feature} feature
+     * @param {ol.Feature} feature The feature that has been set.
+     * @return {ol.Feature} feature The feature that has been set.
      * @private
      */
     applyFeature: function(feature) {
@@ -359,16 +408,16 @@ Ext.define('GeoExt.component.FeatureRenderer', {
         }
         return feature;
     },
+
     /**
      * Update the `feature` or `symbolizers` and redraw the feature.
      *
      * Valid options:
      *
-     * @param options {Object} Object with properties to be updated.
-     * @param options.feature {ol.Feature} The new or updated
-     *     feature.
-     * @param options.symbolizers {ol.style.Style[]|ol.style.Style}
-     *     Symbolizers.
+     * @param {Object} options Object with properties to be updated.
+     * @param {ol.Feature} options.feature The new or updated feature.
+     * @param {ol.style.Style[]|ol.style.Style} options.symbolizers The
+     *     symbolizers.
      */
     update: function(options) {
         if (options.feature) {

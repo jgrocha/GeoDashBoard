@@ -9,11 +9,11 @@
   "signatures": [
     {
       "name": "GeoExt Contributors",
-      "uuid": "7f4590de-e86f-4402-b7b6-5d1d8f646334",
-      "created": "2015-11-23T15:16:23Z",
+      "uuid": "7379f7f2-1a09-4fc4-bb2a-8a9b082a97ad",
+      "created": "2016-08-03T07:59:16Z",
       "algorithm": "SHA1withRSA",
-      "nonce": "UBUiCTogQ+k\u003d",
-      "signature": "fvn6sDQmAboFkoqDDsoLxRdhJhFoT/U1mYo8urim9dwUFcy3eB6HUXZCR5BdPgi7pEOCpJzksejEAa0f3vNgeAwma6l45MmV/h7RkrsK2sdn9W4AXG1ijeQYlzzn08vxuTR7FhjbRugza1zmQ25FULOUv1yrNGQ2R3wCxqqSLQsoMghiDWVhJ2eDjpk3ssbE5iHv2qP1m86mULxrnZ/ktZExiQigW8yR2Qaf/NTLYNe2JRcvmX2aaCbL7n15GhBOdFzGEW4Z7tqtDmrMp1zFEIZ8wQI7+A+WwNBt2aTvVfNqmpkoXg3IdQJzXjxadSx2zYmOFhGk4tiWgOY10jyl3g\u003d\u003d"
+      "nonce": "HvmWJqRPviA\u003d",
+      "signature": "YE9A9igwE9AwMrmgzeqXAq3rtashut3JdnDueeBMyjNrRWBFqzzDd0CuqS/LSwywIdPDFijIvtD6wq4Inbqqt84zKekcLmLFRHmdXXx0l7DW5lo9WZV36dagZRpr4O6ZarlRZrjvehlPgRKP1zhuUSFeOIwoEJwIhsMjPhk09wplVX21H6USSYOBZtkXeE00EwZEhLNUIlR/qeEiTKAFxT7xh3qLlY8Rc70RQcCXygXQQbNaDYf6t6bRej5hHS5e01V1MXWc90PkI82exPxUOSjsq/ebs7hr0ttkVNmhtiYtZWu0mJtIz+iZ/qB2d6SrNYh3qpmq51K6XGOkEsWXoA\u003d\u003d"
     }
   ],
   "slicer": {
@@ -33,27 +33,36 @@
     "url": "https://github.com/geoext/geoext3.git"
   },
   "scripts": {
-    "pretest": "npm run-script lint-js",
-    "test": "mocha-phantomjs --ssl-protocol\u003dany --ignore-ssl-errors\u003dtrue test/index.html",
-    "test:watch": "watch \u0027npm test\u0027 src/ test/",
-    "lint-js": "eslint src/ examples/ \u0026\u0026 eslint -c test/.eslintrc test/spec/",
-    "livereload": "live-reload --port 9091 src/ examples/ test/",
-    "save-coverage": "mocha-phantomjs --ssl-protocol\u003dany --ignore-ssl-errors\u003dtrue --hooks ./test/phantom_hooks.js test/index.html",
-    "clean-coverage": "rm -rf src_instrumented src_old coverage",
-    "ci-coverage": "npm run clean-coverage \u0026\u0026 istanbul instrument src -o src_instrumented \u0026\u0026 mv src src_old \u0026\u0026 mv src_instrumented src \u0026\u0026 istanbul cover npm run save-coverage \u0026\u0026 mv src src_instrumented \u0026\u0026 mv src_old src \u0026\u0026 istanbul report --root ./coverage lcovonly \u0026\u0026 cat ./coverage/lcov.info | coveralls",
-    "html-coverage": "npm run clean-coverage \u0026\u0026 istanbul instrument src -o src_instrumented \u0026\u0026 mv src src_old \u0026\u0026 mv src_instrumented src \u0026\u0026 istanbul cover npm run save-coverage \u0026\u0026 mv src src_instrumented \u0026\u0026 mv src_old src \u0026\u0026 istanbul report --root ./coverage html",
-    "generate-example": "node bin/example-generator/index.js"
+    "clean": "rm -rf coverage apidoc",
+    "lint": "eslint src/ examples/ \u0026\u0026 eslint -c test/.eslintrc test/",
+    "lint:fix": "eslint --fix src/ examples/ \u0026\u0026 eslint --fix -c test/.eslintrc test/",
+    "pretest": "npm run-script lint",
+    "test": "karma start test/karma.conf.js --single-run",
+    "test:debug": "karma start test/karma.conf.js --single-run --debug",
+    "test:coverage": "karma start test/karma.conf.js --single-run --reporters coverage",
+    "test:watch": "karma start test/karma.conf.js",
+    "test:watch:debug": "karma start test/karma.conf.js --debug",
+    "start": "browser-sync start --server --directory --files \u0027src, test, examples\u0027",
+    "coveralls": "cat coverage/lcov.info | coveralls",
+    "generate:example": "node bin/example-generator/index.js",
+    "generate:doc": "jsduck --config jsduck-cfg.json"
   },
   "dependencies": {},
   "devDependencies": {
-    "coveralls": "2.11.4",
-    "eslint": "1.7.3",
+    "browser-sync": "2.12.5",
+    "coveralls": "2.11.9",
+    "eslint": "2.8.0",
+    "eslint-config-openlayers": "4.1.0",
     "expect.js": "0.3.1",
-    "istanbul": "0.3.18",
-    "live-reload": "1.1.0",
-    "mocha": "2.3.3",
-    "mocha-phantomjs": "4.0.1",
-    "sinon": "1.17.2",
-    "watch": "0.16.0"
+    "karma": "0.13.22",
+    "karma-coverage": "0.5.5",
+    "karma-eslint": "2.1.0",
+    "karma-expect": "1.1.2",
+    "karma-mocha": "0.2.2",
+    "karma-phantomjs-launcher": "1.0.0",
+    "karma-sinon": "1.0.4",
+    "mocha": "2.4.5",
+    "phantomjs-prebuilt": "2.1.7",
+    "sinon": "1.17.3"
   }
 }
