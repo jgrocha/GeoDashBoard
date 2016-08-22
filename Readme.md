@@ -4,6 +4,7 @@ This version of the Sencha Admin Dashboard adds another view supported by the [G
 * a map
 * a grid
 * a legend tree
+* an overview map
 
 ## Source
 
