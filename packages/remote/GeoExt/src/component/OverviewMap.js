@@ -507,7 +507,11 @@ Ext.define('GeoExt.component.OverviewMap', {
     onResize: function() {
         // Get the corresponding view of the controller (the mapPanel).
         var me = this;
+        console.log('OverviewMap.js onResize()');
         var div = me.getEl().dom;
+
+        console.log(div);
+
         var map = me.getMap();
 
         if (!me.mapRendered) {

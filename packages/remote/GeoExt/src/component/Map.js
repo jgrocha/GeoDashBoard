@@ -207,6 +207,7 @@ Ext.define('GeoExt.component.Map', {
     onResize: function() {
         // Get the corresponding view of the controller (the mapComponent).
         var me = this;
+        console.log('Map.js onResize()');
         if (!me.mapRendered) {
             var el = me.getTargetEl ? me.getTargetEl() : me.element;
             me.getMap().setTarget(el.dom);
