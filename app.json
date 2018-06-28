@@ -3,7 +3,7 @@
      * The application's namespace.
      */
     "name": "Admin",
-    
+
     /**
      * The version of the application.
      */
@@ -187,31 +187,33 @@
      *
      */
     "js": [{
-        "path": "http://openlayers.org/en/master/build/ol.js",
-        "remote": true
-    }, {
-        "path": "app.js",
-        "bundle": true
-    }],
+            "path": "https://openlayers.org/en/v4.3.2/build/ol.js",
+            "remote": true
+        },
+        {
+            "path": "app.js",
+            "bundle": true
+        }
+    ],
 
     /**
      * Settings specific to classic toolkit builds.
      */
     "classic": {
-//        "js": [{
-//            // Remove this entry to individually load sources from the framework.
-//            "path": "${framework.dir}/build/ext-all-rtl-debug.js"
-//        }]
+        //        "js": [{
+        //            // Remove this entry to individually load sources from the framework.
+        //            "path": "${framework.dir}/build/ext-all-rtl-debug.js"
+        //        }]
     },
 
     /**
      * Settings specific to modern toolkit builds.
      */
     "modern": {
-//        "js": [{
-//            // Remove this entry to individually load sources from the framework.
-//            "path": "${framework.dir}/build/ext-modern-all-debug.js"
-//        }]
+        //        "js": [{
+        //            // Remove this entry to individually load sources from the framework.
+        //            "path": "${framework.dir}/build/ext-modern-all-debug.js"
+        //        }]
     },
 
     /**
@@ -246,6 +248,9 @@
         "bundle": true,
         "exclude": ["fashion"]
     }, {
+        "path": "https://openlayers.org/en/v4.3.2/css/ol.css",
+        "remote": true
+    }, {
         "path": "http://openlayers.org/en/master/css/ol.css",
         "remote": true
     }],
@@ -255,21 +260,21 @@
      * are supported.
      *
      */
-     "loader": {
-         // This property controls how the loader manages caching for requests:
-         //
-         //   - true: allows requests to receive cached responses
-         //   - false: disable cached responses by adding a random "cache buster"
-         //   - other: a string (such as the build.timestamp shown here) to allow
-         //     requests to be cached for this build.
-         //
-         "cache": false,
+    "loader": {
+        // This property controls how the loader manages caching for requests:
+        //
+        //   - true: allows requests to receive cached responses
+        //   - false: disable cached responses by adding a random "cache buster"
+        //   - other: a string (such as the build.timestamp shown here) to allow
+        //     requests to be cached for this build.
+        //
+        "cache": false,
 
-         // When "cache" is not true, this value is the request parameter used
-         // to control caching.
-         //
-         "cacheParam": "_dc"
-     },
+        // When "cache" is not true, this value is the request parameter used
+        // to control caching.
+        //
+        "cacheParam": "_dc"
+    },
 
     /**
      * Settings specific to production builds.
@@ -280,7 +285,7 @@
                 "enable": false,
                 "path": "../cache.appcache"
             }
-            
+
         },
         "loader": {
             "cache": "${build.timestamp}"
@@ -289,7 +294,7 @@
             "enable": false
         }
     },
-    
+
     /**
      * Settings specific to testing builds.
      */
@@ -303,7 +308,7 @@
             "enable": false
         }
     },
-    
+
     /**
      * Settings specific to development builds.
      */
@@ -418,20 +423,20 @@
     },
 
     /**
-    * Controls for localStorage caching
-    *   "cache": {
-    *       // This property controls whether localStorage caching of this manifest file is on or off.
-    *       // if disabled no deltas will be generated during a build and full updates will be disabled
-    *       "enable": false,
-    *
-    *       // This property allows for global toggle of deltas.
-    *       // If set to a string the value will be used as the path to where deltas will be generated relative to you build.
-    *       // If set to a Truthy Value the default path ok "deltas" will be used
-    *       // If set to a Falsey value or if this property is not present deltas will be disabled and not generated.
-    *       //
-    *       "deltas": "deltas"
-    *   }
-    */
+     * Controls for localStorage caching
+     *   "cache": {
+     *       // This property controls whether localStorage caching of this manifest file is on or off.
+     *       // if disabled no deltas will be generated during a build and full updates will be disabled
+     *       "enable": false,
+     *
+     *       // This property allows for global toggle of deltas.
+     *       // If set to a string the value will be used as the path to where deltas will be generated relative to you build.
+     *       // If set to a Truthy Value the default path ok "deltas" will be used
+     *       // If set to a Falsey value or if this property is not present deltas will be disabled and not generated.
+     *       //
+     *       "deltas": "deltas"
+     *   }
+     */
     "cache": {
         "enable": false,
         "deltas": false
@@ -490,12 +495,10 @@
      * Additional resources used during theme slicing operations
      */
     "slicer": {
-        "js": [
-            {
-                "path": "sass/example/custom.js",
-                "isWidgetManifest": true
-            }
-        ],
+        "js": [{
+            "path": "sass/example/custom.js",
+            "isWidgetManifest": true
+        }],
         "output": {
             "appCache": {
                 "enable": false
